@@ -1,14 +1,21 @@
+const { AuthenticationError } = require('apollo-server-express');
 const { User } = require("../models");
 const { signToken } = require('../utils/auth');
 
 const resolvers = {
 	Query: {
 		users: async () => {
-			return User.find().populate('savedBooks');
+			return await User.find().populate('savedBooks');
 		},
 
 		user: async (parent, {username}) => {
-			return User.findOne({username}).populate('savedBooks');
+			const foundUser = await User.findOne({username}).populate('savedBooks');
+
+			if (!foundUser) {
+				throw new AuthenticationError( 'Cannot find a user with this id!' );
+			}
+
+			return foundUser;
 		}
 	},
 
