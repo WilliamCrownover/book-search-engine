@@ -4,6 +4,7 @@ const { ApolloServer } = require('apollo-server-express');
 const path = require('path');
 // Adding schema files and authMiddleware
 const { typeDefs, resolvers } = require('./schemas');
+const { authMiddleware } = require('./utils/authGQL');
 
 const db = require('./config/connection');
 
@@ -18,6 +19,7 @@ const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: authMiddleware,
 });
 
 // Adding the applyMiddleware line
