@@ -9,7 +9,7 @@ const { authMiddleware } = require('./utils/authGQL');
 const db = require('./config/connection');
 
 // THIS WILL BE REMOVED!
-const routes = require('./routes');
+// const routes = require('./routes');
 // THIS WILL BE REMOVED!
 
 const app = express();
@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // THIS WILL BE REMOVED!
-app.use(routes);
+// app.use(routes);
 // THIS WILL BE REMOVED!
 
 db.once('open', () => {
