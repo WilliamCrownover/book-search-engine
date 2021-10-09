@@ -9,14 +9,12 @@ const resolvers = {
 		},
 
 		// Consider switching this over to user context
-		me: async (parent, {username}) => {
-			const foundUser = await User.findOne({username}).populate('savedBooks');
+		me: async (parent, args, context) => {
+			const foundUser = await User.findOne({ _id: context.user._id }).populate('savedBooks');
 
 			if (!foundUser) {
 				throw new AuthenticationError( 'Cannot find a user with this id!' );
 			}
-
-			const bookCount = foundUser.savedBooks.length;
 
 			return foundUser;
 		}
