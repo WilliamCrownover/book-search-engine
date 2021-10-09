@@ -8,19 +8,22 @@ const resolvers = {
 			return await User.find().populate('savedBooks');
 		},
 
-		user: async (parent, {username}) => {
+		// Consider switching this over to user context
+		me: async (parent, {username}) => {
 			const foundUser = await User.findOne({username}).populate('savedBooks');
 
 			if (!foundUser) {
 				throw new AuthenticationError( 'Cannot find a user with this id!' );
 			}
 
+			const bookCount = foundUser.savedBooks.length;
+
 			return foundUser;
 		}
 	},
 
 	Mutation: {
-		createUser: async (parent, { username, email, password }) => {
+		addUser: async (parent, { username, email, password }) => {
 			const user = await User.create({username, email, password});
 
 			if (!user) {
@@ -48,7 +51,27 @@ const resolvers = {
 			const token = signToken(user);
 
 			return { token, user };
+		},
+
+		saveBook: async (parent, { input }, context ) => {
+			if (context.user) {
+				return User.findOneAndUpdate(
+					{_id: conxext.user._id},
+					{ 
+						$addToSet: {
+							savedBooks: { ...input }
+						}
+					},
+					{
+						new: true
+					}
+				);
+			}
+
+			throw new AuthenticationError('You need to be logged in!');
 		}
+
+		// removeBook
 	}
 
 }
