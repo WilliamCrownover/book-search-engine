@@ -1,6 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User } = require("../models");
-const { signToken } = require('../utils/authGQL');
+const { signToken } = require('../utils/auth');
 
 const resolvers = {
 	Query: {
@@ -8,7 +8,6 @@ const resolvers = {
 			return await User.find().populate('savedBooks');
 		},
 
-		// Consider switching this over to user context
 		me: async (parent, args, context) => {
 			const foundUser = await User.findOne({ _id: context.user._id }).populate('savedBooks');
 
@@ -51,13 +50,13 @@ const resolvers = {
 			return { token, user };
 		},
 
-		saveBook: async (parent, { input }, context ) => {
+		saveBook: async (parent, { book }, context ) => {
 			if (context.user) {
 				return User.findOneAndUpdate(
 					{_id: context.user._id},
 					{ 
 						$addToSet: {
-							savedBooks: { ...input }
+							savedBooks: { ...book }
 						}
 					},
 					{
@@ -89,7 +88,6 @@ const resolvers = {
 			throw new AuthenticationError('You need to be logged in!');
 		}
 	}
-
 }
 
 module.exports = resolvers;

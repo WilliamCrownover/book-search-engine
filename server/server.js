@@ -4,13 +4,9 @@ const { ApolloServer } = require('apollo-server-express');
 const path = require('path');
 // Adding schema files and authMiddleware
 const { typeDefs, resolvers } = require('./schemas');
-const { authMiddleware } = require('./utils/authGQL');
+const { authMiddleware } = require('./utils/auth');
 
 const db = require('./config/connection');
-
-// THIS WILL BE REMOVED!
-// const routes = require('./routes');
-// THIS WILL BE REMOVED!
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,10 +28,6 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
-
-// THIS WILL BE REMOVED!
-// app.use(routes);
-// THIS WILL BE REMOVED!
 
 db.once('open', () => {
   app.listen(PORT, () => {
